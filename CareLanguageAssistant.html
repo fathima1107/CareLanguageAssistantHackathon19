@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Care Language Assistant – Meadow House</title>
+<!-- Optional web fonts for the accessibility font choices. If offline, the app falls back to Verdana/Arial. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;700&display=swap" rel="stylesheet">
+<script>
+/* Apply saved accessibility choices before first paint (avoids a flash of the default theme). */
+(function(){try{var s=JSON.parse(localStorage.getItem("cla-a11y")||"{}"),r=document.documentElement;
+["theme","font","size","space","motion"].forEach(function(k){if(typeof s[k]==="string"&&/^[a-z0-9-]{1,20}$/.test(s[k]))r.setAttribute("data-"+k,s[k]);});}catch(e){}})();
+</script>
+<style>
+/* ---------- Theme variables (default = original pink look) ---------- */
+:root{
+  --scale:1;--font:"Nunito","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--lh:1.6;--ls:normal;--ws:normal;--bw:2px;
+  --bg:#fff0f6;--ink:#4a1d36;--muted:#7a4a62;--teal:#b92b6b;--teal-d:#961f54;--onp:#fff;
+  --line:#ffd0e3;--card:#fff;--mark:#ffc4dd;--markink:#4a1d36;--markline:#e0508f;
+  --ok:#14602f;--okbg:#e6f6ec;--okline:#a9dfbc;--insbg:#d3efdc;--err:#9b1c1c;--errbg:#ffe6e6;
+  --field:#fffafc;--soft:#ffe0ee;--softer:#ffe6f1;--header:#ffd3e6;--deco:rgba(255,255,255,.55);
+  --ro:#fbf1f5;--ign:#faf3f6;--ignline:#b79aa9;--tips:#fff6fa;--accent:#f472b6;--focus:#1a56db;--hoverline:#f4a3c6;
+  --shadow:0 2px 4px rgba(185,43,107,.08),0 12px 30px rgba(244,114,182,.22);
+}
+html[data-theme="dark"]{--bg:#1b1220;--ink:#f6e9f0;--muted:#d2bccb;--teal:#f48fb8;--teal-d:#ffb3d1;--onp:#2a0a19;--line:#5a3b4f;--card:#2a1d30;--mark:#6b2a4a;--markink:#fff0f6;--markline:#ff8fc0;--ok:#8fe3a8;--okbg:#173222;--okline:#2f7a4a;--insbg:#1f4a31;--err:#ffb4b4;--errbg:#3d1a1a;--field:#221729;--soft:#4a2a3f;--softer:#3a2540;--header:#3a1f33;--ro:#241a29;--ign:#261c2b;--ignline:#9a8190;--tips:#261b2c;--accent:#f48fb8;--focus:#8ab4ff;--hoverline:#a0607f;color-scheme:dark;--shadow:0 2px 4px rgba(0,0,0,.4),0 12px 30px rgba(0,0,0,.45);--deco:rgba(255,255,255,.07)}
+html[data-theme="hc-dark"]{--bg:#000000;--ink:#ffffff;--muted:#e6e6e6;--teal:#ffeb3b;--teal-d:#fff59d;--onp:#000000;--line:#ffffff;--card:#000000;--mark:#ffeb3b;--markink:#000000;--markline:#ffffff;--ok:#9dff9d;--okbg:#002b10;--okline:#9dff9d;--insbg:#003d1a;--err:#ff9d9d;--errbg:#3a0000;--field:#000000;--soft:#333333;--softer:#222222;--header:#000000;--ro:#111111;--ign:#111111;--ignline:#bbbbbb;--tips:#000000;--accent:#ffeb3b;--focus:#00e5ff;--hoverline:#ffeb3b;--bw:3px;--shadow:none;--deco:transparent}
+html[data-theme="hc-light"]{--bg:#ffffff;--ink:#000000;--muted:#1a1a1a;--teal:#000000;--teal-d:#333333;--onp:#ffffff;--line:#000000;--card:#ffffff;--mark:#ffeb3b;--markink:#000000;--markline:#000000;--ok:#004d1a;--okbg:#e8ffe8;--okline:#004d1a;--insbg:#c8f5c8;--err:#8a0000;--errbg:#ffe0e0;--field:#ffffff;--soft:#d9d9d9;--softer:#eeeeee;--header:#ffffff;--ro:#f0f0f0;--ign:#f0f0f0;--ignline:#000000;--tips:#ffffff;--accent:#000000;--focus:#0033cc;--hoverline:#000000;--bw:3px;--shadow:none;--deco:transparent}
+html[data-theme="cb"]{--bg:#f4f8fc;--ink:#1b2733;--muted:#44566a;--teal:#0b5cad;--teal-d:#084a8c;--onp:#ffffff;--line:#bcd0e4;--card:#ffffff;--mark:#ffe08a;--markink:#1b2733;--markline:#b36b00;--ok:#084a8c;--okbg:#e3f0fb;--okline:#7fb0e0;--insbg:#cfe4f8;--err:#8a4300;--errbg:#fde8cf;--field:#ffffff;--soft:#dce9f6;--softer:#e8f1fa;--header:#dce9f6;--ro:#eef3f8;--ign:#f1f1f1;--ignline:#8a8a8a;--tips:#f7fafd;--accent:#e69f00;--focus:#6a1b9a;--hoverline:#7fa6cc;--deco:rgba(255,255,255,.6);--shadow:0 2px 4px rgba(11,92,173,.08),0 12px 30px rgba(11,92,173,.15)}
+html[data-theme="yellow"]{--ink:#2b2b2b;--muted:#4a4a4a;--onp:#ffffff;--markink:#2b2b2b;--ok:#1b5a2e;--okbg:#e2f2e3;--okline:#8cc79a;--insbg:#cfe9d3;--err:#8f1d1d;--errbg:#fbe3e3;--focus:#1a3fc4;--ign:#f3ebaa;--tips:#fffbe3;--bg:#faf4c0;--card:#fffbe3;--field:#fffdf0;--line:#d6c96a;--ro:#f3ebaa;--soft:#efe59a;--softer:#f5edb0;--header:#f3e99a;--mark:#ffe066;--markline:#8a6a00;--accent:#c49a00;--ignline:#8c8450;--hoverline:#b9ab4a;--teal:#6b4e00;--teal-d:#4d3800;--deco:rgba(255,255,255,.45);--shadow:0 2px 4px rgba(0,0,0,.06),0 10px 24px rgba(0,0,0,.10)}
+html[data-theme="pink"]{--ink:#2b2b2b;--muted:#4a4a4a;--onp:#ffffff;--markink:#2b2b2b;--ok:#1b5a2e;--okbg:#e2f2e3;--okline:#8cc79a;--insbg:#cfe9d3;--err:#8f1d1d;--errbg:#fbe3e3;--focus:#1a3fc4;--ign:#f8dce6;--tips:#fff5f8;--bg:#fde8ef;--card:#fff5f8;--field:#fffafc;--line:#e4b3c6;--ro:#f8dce6;--soft:#f6cfdc;--softer:#fadbe5;--header:#f8d3df;--mark:#f7b8cc;--markline:#8f2f5c;--accent:#c2587f;--ignline:#94727f;--hoverline:#d98fab;--teal:#8a2c58;--teal-d:#661f40;--deco:rgba(255,255,255,.45);--shadow:0 2px 4px rgba(0,0,0,.06),0 10px 24px rgba(0,0,0,.10)}
+html[data-theme="blue"]{--ink:#2b2b2b;--muted:#4a4a4a;--onp:#ffffff;--markink:#2b2b2b;--ok:#1b5a2e;--okbg:#e2f2e3;--okline:#8cc79a;--insbg:#cfe9d3;--err:#8f1d1d;--errbg:#fbe3e3;--focus:#1a3fc4;--ign:#d8e9f5;--tips:#f2f9fe;--bg:#e3f1fb;--card:#f2f9fe;--field:#f8fcff;--line:#a9cde8;--ro:#d8e9f5;--soft:#c9e2f4;--softer:#d6e9f7;--header:#cfe6f6;--mark:#a8d4f2;--markline:#1f4e79;--accent:#4a8ac0;--ignline:#6f8799;--hoverline:#7fb2d8;--teal:#1f4e79;--teal-d:#153a5c;--deco:rgba(255,255,255,.45);--shadow:0 2px 4px rgba(0,0,0,.06),0 10px 24px rgba(0,0,0,.10)}
+html[data-theme="green"]{--ink:#2b2b2b;--muted:#4a4a4a;--onp:#ffffff;--markink:#2b2b2b;--ok:#1b5a2e;--okbg:#e2f2e3;--okline:#8cc79a;--insbg:#cfe9d3;--err:#8f1d1d;--errbg:#fbe3e3;--focus:#1a3fc4;--ign:#dbeed8;--tips:#f4faf3;--bg:#e6f4e4;--card:#f4faf3;--field:#fafdf9;--line:#aed3aa;--ro:#dbeed8;--soft:#cfe6cb;--softer:#d9ecd6;--header:#d3e9d0;--mark:#b5dcae;--markline:#2d5f3a;--accent:#5a9b66;--ignline:#738a76;--hoverline:#85b87f;--teal:#2d5f3a;--teal-d:#1f4529;--deco:rgba(255,255,255,.45);--shadow:0 2px 4px rgba(0,0,0,.06),0 10px 24px rgba(0,0,0,.10)}
+html[data-theme="peach"]{--ink:#2b2b2b;--muted:#4a4a4a;--onp:#ffffff;--markink:#2b2b2b;--ok:#1b5a2e;--okbg:#e2f2e3;--okline:#8cc79a;--insbg:#cfe9d3;--err:#8f1d1d;--errbg:#fbe3e3;--focus:#1a3fc4;--ign:#f8e2cb;--tips:#fff7ee;--bg:#fdeedd;--card:#fff7ee;--field:#fffbf6;--line:#e6c29e;--ro:#f8e2cb;--soft:#f3d6b8;--softer:#f8e0c8;--header:#f6dcc0;--mark:#f5c99b;--markline:#8a4a1f;--accent:#c47a3a;--ignline:#94806c;--hoverline:#d9aa7a;--teal:#8a4a1f;--teal-d:#663512;--deco:rgba(255,255,255,.45);--shadow:0 2px 4px rgba(0,0,0,.06),0 10px 24px rgba(0,0,0,.10)}
+html[data-theme="hc-dark"] header.top,html[data-theme="hc-light"] header.top{border-bottom:var(--bw) solid var(--line)}
+html[data-theme="cb"] .chg ins,html[data-theme="hc-dark"] .chg ins,html[data-theme="hc-light"] .chg ins{text-decoration:underline;text-underline-offset:3px}
+html[data-theme="hc-dark"] mark,html[data-theme="hc-light"] mark{text-decoration:underline;text-underline-offset:3px}
+/* ---------- Font choices ---------- */
+html[data-font="dyslexia"]{--font:"OpenDyslexic","Lexend","Atkinson Hyperlegible",Verdana,Tahoma,sans-serif}
+html[data-font="hyper"]{--font:"Atkinson Hyperlegible",Verdana,Tahoma,Arial,sans-serif}
+html[data-font="plain"]{--font:Arial,Helvetica,sans-serif}
+/* ---------- Text size ---------- */
+html{font-size:calc(100% * var(--scale))}
+html[data-size="1"]{--scale:1.25}
+html[data-size="2"]{--scale:1.5}
+html[data-size="3"]{--scale:2}
+/* ---------- Spacing ---------- */
+html[data-space="1"]{--lh:1.9;--ls:.04em;--ws:.12em}
+html[data-space="2"]{--lh:2.2;--ls:.1em;--ws:.2em}
+/* ---------- Motion ---------- */
+html[data-motion="1"] *{transition:none!important;animation:none!important}
+html[data-motion="1"] button:hover{transform:none}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:1rem/var(--lh) var(--font);letter-spacing:var(--ls);word-spacing:var(--ws);overflow-wrap:anywhere}
+button,textarea{letter-spacing:inherit;word-spacing:inherit}
+
+/* ---------- Accessibility bar ---------- */
+.skip{position:absolute;left:8px;top:-80px;z-index:20;background:var(--teal);color:var(--onp);padding:10px 18px;border-radius:999px;font-weight:700;text-decoration:none}
+.skip:focus{top:8px}
+.a11y-bar{background:var(--card);border-bottom:var(--bw) solid var(--line);position:relative;z-index:5}
+.a11y-in{max-width:960px;margin:0 auto;padding:8px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.a11y-in .grow{margin-right:auto}
+.sizegrp{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.sizenow{font-weight:700;font-size:.9rem}
+.btn-sm{padding:4px 16px}
+button[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+button[aria-disabled="true"]:hover{transform:none;box-shadow:none}
+.a11y-panel{border-top:var(--bw) solid var(--line);background:var(--soft)}
+.a11y-head{max-width:960px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.a11y-head p{margin:0 auto 0 0;font-size:.95rem}
+.a11y-grid{max-width:960px;margin:0 auto;padding:12px 16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px}
+.a11y-grid fieldset{border:var(--bw) solid var(--line);border-radius:20px;padding:10px 14px 14px;min-width:0;margin:0;background:var(--card)}
+.a11y-grid .wide{grid-column:1/-1}
+.a11y-grid legend{font-weight:800;padding:0 8px}
+.sub{font-weight:700;font-size:.9rem;color:var(--muted);margin:8px 0 6px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative;display:inline-flex;margin:0;font-weight:700}
+.opt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.optbox{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 16px;border:var(--bw) solid var(--line);border-radius:999px;background:var(--card);color:var(--ink)}
+.opt:hover .optbox{border-color:var(--hoverline)}
+.opt input:checked+.optbox{background:var(--teal);color:var(--onp);border-color:var(--teal)}
+.opt input:checked+.optbox::after{content:"\2713";font-weight:800}
+.opt input:focus-visible+.optbox{outline:3px solid var(--focus);outline-offset:2px}
+.sw{flex:none;width:1.15em;height:1.15em;border-radius:50%;border:2px solid currentColor;background:linear-gradient(90deg,var(--s1) 50%,var(--s2) 50%)}
+
+/* ---------- Page ---------- */
+header.top{position:relative;overflow:hidden;background:var(--header);color:var(--ink);padding:34px 16px 72px;border-radius:0 0 44px 44px}
+header.top::before,header.top::after{content:"";position:absolute;border-radius:50%;background:var(--deco)}
+header.top::before{width:190px;height:190px;right:6%;top:-70px}
+header.top::after{width:110px;height:110px;left:-30px;bottom:-40px}
+.wrap,main{max-width:960px;margin:0 auto}
+.wrap{position:relative;z-index:1}
+main{padding:0 16px 56px;margin-top:-44px;position:relative}
+.house{display:inline-block;margin:0 0 10px;font-size:.9rem;font-weight:700;background:var(--card);color:var(--teal-d);padding:3px 14px;border-radius:999px}
+h1{font:800 2.2rem/1.15 var(--font);margin:0 0 8px}
+h2{font:800 1.3rem/1.3 var(--font);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.n{flex:none;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--teal);color:var(--onp);font:800 1rem/2.1rem var(--font);text-align:center;box-shadow:inset -3px -3px 0 rgba(0,0,0,.12),0 0 0 5px var(--soft)}
+.lead{color:var(--muted);margin:0;max-width:60ch}
+.card{background:var(--card);border:var(--bw) solid var(--line);border-radius:28px;padding:22px;margin-bottom:20px;box-shadow:var(--shadow)}
+label{display:block;font-weight:700;margin-bottom:2px}
+.hint{font-size:.875rem;color:var(--muted);margin:0 0 10px}
+textarea{width:100%;min-height:130px;font:inherit;padding:14px 16px;border:var(--bw) solid var(--line);border-radius:20px;color:var(--ink);background:var(--field);resize:vertical;transition:border-color .15s,box-shadow .15s}
+textarea:hover{border-color:var(--hoverline)}
+textarea:focus{border-color:var(--teal);box-shadow:0 0 0 4px var(--soft)}
+textarea[aria-invalid="true"]{border-color:var(--err)}
+.count{font-size:.875rem;color:var(--muted);text-align:right;margin-top:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+button{font:inherit;font-weight:700;border-radius:999px;padding:9px 24px;cursor:pointer;border:var(--bw) solid var(--teal);min-height:44px;transition:background .15s,transform .15s,box-shadow .15s}
+button:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.18)}
+button:active{transform:translateY(1px);box-shadow:none}
+.primary,.accept{background:var(--teal);color:var(--onp)}
+.primary:hover,.accept:hover{background:var(--teal-d)}
+.ignore{background:var(--card);color:var(--teal-d)}.ignore:hover{background:var(--softer)}
+.clear{background:var(--card);color:var(--ink);border-color:var(--line)}.clear:hover{background:var(--softer)}
+button:focus-visible,textarea:focus-visible,[tabindex="-1"]:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.error{background:var(--errbg);color:var(--err);border:var(--bw) solid var(--err);border-radius:18px;padding:10px 16px;margin-top:10px;font-weight:700}
+.status{background:var(--okbg);color:var(--ok);border-radius:999px;padding:10px 18px;font-weight:700}
+.status.none{background:var(--ro);color:var(--ink)}
+.bar{height:14px;border-radius:999px;background:var(--soft);margin-top:12px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .4s}
+.versions{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:720px){.versions{grid-template-columns:1fr}h1{font-size:1.7rem}}
+.text{background:var(--field);border:var(--bw) solid var(--line);border-radius:20px;padding:14px 16px;white-space:pre-wrap;min-height:64px;font-size:1.02rem}
+.text.readonly{background:var(--ro);border-style:dashed}
+mark{background:var(--mark);color:var(--markink);padding:1px 6px;border-radius:999px;box-shadow:inset 0 -2px 0 var(--markline)}
+ul{list-style:none;margin:0;padding:0}
+li.s{border:var(--bw) solid var(--line);border-left:8px solid var(--accent);border-radius:22px;padding:14px 18px;margin-bottom:12px;background:var(--card)}
+li.s[data-st="accepted"]{border-color:var(--okline);border-left-color:var(--ok);background:var(--okbg)}
+li.s[data-st="ignored"]{border-left-color:var(--ignline);background:var(--ign)}
+.chg{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:1.05rem}
+.chg del,.chg ins{padding:2px 12px;border-radius:999px;text-decoration:none}
+.chg del{background:var(--errbg);color:var(--err);text-decoration:line-through}
+.chg ins{background:var(--insbg);color:var(--ok);font-weight:800}
+.arr{color:var(--muted);font-weight:800}
+.reason{margin:8px 0 10px;color:var(--muted)}
+.reason strong{color:var(--ink)}
+.badge{font-weight:800;font-size:.875rem;padding:2px 12px;border-radius:999px;border:2px solid currentColor;margin-left:auto}
+li[data-st="accepted"] .badge{color:var(--ok)}li[data-st="ignored"] .badge{color:var(--muted)}
+.bulk{margin:12px 0 0}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}button:hover{transform:none}}
+details.tips{margin-top:16px;background:var(--tips);border:var(--bw) solid var(--line);border-radius:20px;padding:10px 18px}
+summary{font-weight:800;cursor:pointer;min-height:28px}
+summary:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+fieldset{border:0;margin:6px 0 0;padding:0}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin:8px 0}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--teal);flex:none;margin-top:2px}
+.chgd{background:var(--insbg);color:var(--ok);border-radius:999px;padding:0 8px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<section class="a11y-bar" aria-label="Accessibility options">
+  <a class="skip" href="#note">Skip to note</a>
+  <div class="a11y-in">
+    <button type="button" class="ignore btn-sm grow" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel"><span aria-hidden="true">&#9881;</span> Accessibility settings</button>
+    <div class="sizegrp" role="group" aria-label="Text size">
+      <button type="button" class="clear btn-sm" id="size-down"><span aria-hidden="true">A&minus;</span> Smaller text</button>
+      <span class="sizenow" id="size-now">Text size: Normal</span>
+      <button type="button" class="clear btn-sm" id="size-up"><span aria-hidden="true">A+</span> Larger text</button>
+    </div>
+  </div>
+  <div class="a11y-panel" id="a11y-panel" hidden>
+    <div class="a11y-head">
+      <p>Changes apply straight away and are remembered on this device.</p>
+      <button type="button" class="clear btn-sm" id="a11y-reset">Reset to defaults</button>
+      <button type="button" class="primary btn-sm" id="a11y-done">Done</button>
+    </div>
+    <div class="a11y-grid">
+      <fieldset>
+        <legend>Text size</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="size" value="0"><span class="optbox">Normal</span></label>
+          <label class="opt"><input type="radio" name="size" value="1"><span class="optbox">Large (125%)</span></label>
+          <label class="opt"><input type="radio" name="size" value="2"><span class="optbox">Larger (150%)</span></label>
+          <label class="opt"><input type="radio" name="size" value="3"><span class="optbox">Largest (200%)</span></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Font</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="font" value="default"><span class="optbox">Standard</span></label>
+          <label class="opt"><input type="radio" name="font" value="dyslexia"><span class="optbox">Dyslexia-friendly</span></label>
+          <label class="opt"><input type="radio" name="font" value="hyper"><span class="optbox">Highly legible</span></label>
+          <label class="opt"><input type="radio" name="font" value="plain"><span class="optbox">Plain (Arial)</span></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Spacing</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="space" value="0"><span class="optbox">Standard</span></label>
+          <label class="opt"><input type="radio" name="space" value="1"><span class="optbox">Wider</span></label>
+          <label class="opt"><input type="radio" name="space" value="2"><span class="optbox">Widest</span></label>
+        </div>
+        <p class="sub">Adjusts line, letter and word spacing together.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Motion</legend>
+        <label class="chk"><input type="checkbox" name="motion" value="1"> Reduce motion and animations</label>
+      </fieldset>
+      <fieldset class="wide">
+        <legend>Colour theme</legend>
+        <p class="sub">Colour styles</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="theme" value="default"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#fff0f6;--s2:#b92b6b"></span>Pink (default)</span></label>
+          <label class="opt"><input type="radio" name="theme" value="dark"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#1b1220;--s2:#f48fb8"></span>Dark</span></label>
+          <label class="opt"><input type="radio" name="theme" value="hc-dark"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#000000;--s2:#ffeb3b"></span>High contrast: yellow on black</span></label>
+          <label class="opt"><input type="radio" name="theme" value="hc-light"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#ffffff;--s2:#000000"></span>High contrast: black on white</span></label>
+          <label class="opt"><input type="radio" name="theme" value="cb"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#f4f8fc;--s2:#0b5cad"></span>Colour-blind friendly (blue &amp; orange)</span></label>
+        </div>
+        <p class="sub">Reading backgrounds: softer on the eyes, often chosen by people with dyslexia or visual stress</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="theme" value="yellow"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#faf4c0;--s2:#6b4e00"></span>Soft yellow</span></label>
+          <label class="opt"><input type="radio" name="theme" value="pink"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#fde8ef;--s2:#8a2c58"></span>Soft pink</span></label>
+          <label class="opt"><input type="radio" name="theme" value="blue"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#e3f1fb;--s2:#1f4e79"></span>Soft blue</span></label>
+          <label class="opt"><input type="radio" name="theme" value="green"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#e6f4e4;--s2:#2d5f3a"></span>Soft green</span></label>
+          <label class="opt"><input type="radio" name="theme" value="peach"><span class="optbox"><span class="sw" aria-hidden="true" style="--s1:#fdeedd;--s2:#8a4a1f"></span>Soft peach</span></label>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</section>
+
+<header class="top"><div class="wrap"><p class="house">&#9825; Meadow House</p><h1>Care Language Assistant</h1><p class="lead">Review the wording in a care note. Nothing changes until you accept a suggestion.</p></div></header>
+<main>
+  <section class="card" aria-labelledby="enter-h">
+    <h2 id="enter-h"><span class="n" aria-hidden="true">1</span>Enter a note</h2>
+    <label for="note">Care note</label>
+    <p class="hint" id="note-hint">Type or paste a note, then choose Check note.</p>
+    <textarea id="note" aria-describedby="note-hint note-err" placeholder="e.g. The service user arrived."></textarea>
+    <div id="note-err" role="alert"></div>
+    <div class="row">
+      <button type="button" class="primary" id="check">Check note</button>
+      <button type="button" class="ignore" id="struct">Add note structure</button>
+      <button type="button" class="clear" id="clear">Clear</button>
+    </div>
+    <details class="tips">
+      <summary>Writing checklist: what a good note includes</summary>
+      <fieldset>
+        <legend class="hint">Tick as you go. This is just for you and is not saved.</legend>
+        <label class="chk"><input type="checkbox"> When and where it happened (date, time, place)</label>
+        <label class="chk"><input type="checkbox"> Who was involved, and who said what</label>
+        <label class="chk"><input type="checkbox"> What you saw, heard and did: facts, not opinions</label>
+        <label class="chk"><input type="checkbox"> The person's own words, in quotation marks</label>
+        <label class="chk"><input type="checkbox"> Any injury or concern, and who you told</label>
+        <label class="chk"><input type="checkbox"> What happens next</label>
+      </fieldset>
+      <p class="hint">Wording suggestions only change terms. They never add, soften or remove facts.</p>
+    </details>
+  </section>
+
+  <section id="results" hidden aria-labelledby="res-h">
+    <div class="card">
+      <h2 id="res-h" tabindex="-1"><span class="n" aria-hidden="true">2</span>Suggestions</h2>
+      <div id="summary" class="status" role="status"></div>
+      <div class="bar" id="bar" aria-hidden="true"><span id="barfill"></span></div>
+
+      <ul id="list" style="margin-top:12px"></ul>
+    </div>
+    <div class="versions">
+      <div class="card">
+        <h2 id="orig-h">Original note (read-only)</h2>
+        <div class="text readonly" id="orig" role="region" aria-labelledby="orig-h"></div>
+      </div>
+      <div class="card">
+        <h2 id="rev-h">Reviewed note</h2>
+        <div class="text" id="rev" role="region" aria-labelledby="rev-h"></div>
+        <div class="row"><button type="button" class="ignore" id="copy">Copy reviewed note</button>
+          <button type="button" class="ignore" id="dl">Download as text file</button></div>
+      </div>
+    </div>
+  </section>
+  <div id="live" class="sr" role="status" aria-live="polite"></div>
+</main>
+
+<script>
+
+const PAIRS=[
+["service users","people we support"],["service user","person we support"],
+["clients","people we support"],["client","person we support"],
+["family contact","family time"],["contact centre","family centre"],
+["care leaver","care-experienced person"],["foster placement","foster home"],
+["residential placement","children's home"],["looked-after child","child in care"]];
+const REASON="Use person-focused wording in this care note.";
+const REASONS={"family contact":"Use warmer, relationship-focused wording in this care note.","contact centre":"Use warmer, relationship-focused wording in this care note.","care leaver":"Use person-focused wording in this care note.","foster placement":"Use home-focused wording in this care note.","residential placement":"Use home-focused wording in this care note.","looked-after child":"Use person-focused wording in this care note."};
+const esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rx=new RegExp("(?<![A-Za-z0-9])("+[...PAIRS].sort((a,b)=>b[0].length-a[0].length).map(p=>p[0].replace(/[-]/g,"\\-").replace(/ /g,"\\s+")).join("|")+")(?![A-Za-z0-9])","gi");
+const $=id=>document.getElementById(id);
+let original="",items=[];
+
+function quotedRanges(t){
+  const r=[];let i=0;
+  while(i<t.length){
+    const c=t[i];
+    if(c==='"'||c==="\u201C"){
+      const close=c==='"'?'"':"\u201D";
+      let j=t.indexOf(close,i+1);
+      if(j<0)j=t.length-1;
+      r.push([i,j+1]);i=j+1;
+    }else i++;
+  }
+  return r;
+}
+function fitCase(src,rep){
+  const letters=src.replace(/[^A-Za-z]/g,"");
+  if(letters.length>1&&letters===letters.toUpperCase())return rep.toUpperCase();
+  if(/^[A-Z]/.test(src))return rep[0].toUpperCase()+rep.slice(1);
+  return rep;
+}
+function analyse(t){
+  const q=quotedRanges(t),out=[];let m;rx.lastIndex=0;
+  while((m=rx.exec(t))){
+    const s=m.index,e=s+m[0].length;
+    if(q.some(([a,b])=>s>=a&&s<b))continue;
+    const key=m[0].toLowerCase().replace(/\s+/g," ");
+    const pair=PAIRS.find(p=>p[0]===key);
+    out.push({start:s,end:e,source:m[0],key,rep:fitCase(m[0],pair[1]),reason:REASONS[key]||REASON,status:"pending"});
+  }
+  return out;
+}
+function reviewed(){
+  let o="",pos=0;
+  for(const it of items){if(it.status==="accepted"){o+=original.slice(pos,it.start)+it.rep;pos=it.end;}}
+  return o+original.slice(pos);
+}
+function renderOriginal(){
+  let h="",pos=0;
+  for(const it of items){h+=esc(original.slice(pos,it.start))+"<mark>"+esc(original.slice(it.start,it.end))+"</mark>";pos=it.end;}
+  $("orig").innerHTML=h+esc(original.slice(pos));
+}
+function render(focusIdx){
+  const n=items.length,pend=items.filter(i=>i.status==="pending").length;
+  const sm=$("summary");
+  $("barfill").style.width=(n?(n-pend)/n*100:0)+"%";$("bar").hidden=!n;
+  if(!n){sm.className="status none";sm.textContent="No care terms found in this note.";}
+  else{sm.className="status";sm.textContent=n+(n===1?" suggestion":" suggestions")+" found. "+pend+" still to review.";}
+  $("list").innerHTML=items.map((it,i)=>{
+    const done=it.status!=="pending";
+    const badge=it.status==="accepted"?'<span class="badge">Accepted</span>':it.status==="ignored"?'<span class="badge">Ignored</span>':"";
+    return '<li class="s" tabindex="-1" id="s'+i+'" data-st="'+it.status+'">'
+     +'<div class="chg"><strong>Suggestion '+(i+1)+':</strong> <del>'+esc(it.source)+'</del><span class="arr" aria-hidden="true">&rarr;</span><span class="sr"> to </span><ins>'+esc(it.rep)+'</ins>'+badge+'</div>'
+     +'<p class="reason"><strong>Reason:</strong> '+esc(it.reason)+'</p>'
+     +(done?'<div class="row" style="margin-top:0"><button type="button" class="clear" data-a="undo" data-i="'+i+'" aria-label="Undo '+(it.status==="accepted"?"accept":"ignore")+' for suggestion '+(i+1)+': '+esc(it.source)+'">Undo</button></div>':'<div class="row" style="margin-top:0"><button type="button" class="accept" data-a="accept" data-i="'+i+'" aria-label="Accept change '+(i+1)+': '+esc(it.source)+' to '+esc(it.rep)+'">Accept</button>'
+     +'<button type="button" class="ignore" data-a="ignore" data-i="'+i+'" aria-label="Ignore suggestion '+(i+1)+': '+esc(it.source)+'">Ignore</button></div>')
+     +'</li>';}).join("");
+  renderOriginal();
+  $("rev").innerHTML=reviewedHtml();
+  if(focusIdx!=null){const el=$("s"+focusIdx);el&&el.focus();}
+}
+function check(){
+  const v=$("note").value;
+  const err=$("note-err");
+  if(!v.trim()){
+    err.innerHTML='<div class="error">Enter a care note before checking.</div>';
+    $("note").setAttribute("aria-invalid","true");$("note").focus();
+    $("results").hidden=true;original="";items=[];return;
+  }
+  err.innerHTML="";$("note").removeAttribute("aria-invalid");
+  original=v;items=analyse(original);
+  $("results").hidden=false;render();
+  $("live").textContent=items.length?items.length+" suggestions found.":"No care terms found.";
+  $("res-h").focus();
+}
+$("check").onclick=check;
+$("clear").onclick=()=>{$("note").value="";$("note-err").innerHTML="";$("note").removeAttribute("aria-invalid");$("results").hidden=true;original="";items=[];$("note").focus();};
+$("list").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-a]");if(!b)return;
+  const i=+b.dataset.i,it=items[i];
+  const act=b.dataset.a;it.status=act==="accept"?"accepted":act==="ignore"?"ignored":"pending";
+  render(i);
+  $("live").textContent=it.status==="accepted"?"Accepted: "+it.source+" changed to "+it.rep+".":it.status==="ignored"?"Ignored: "+it.source+" left unchanged.":"Undone: "+it.source+" is pending again.";
+});
+
+$("copy").onclick=async()=>{let ok=true;try{await navigator.clipboard.writeText($("rev").textContent);}catch(e){ok=false;}
+  $("live").textContent=ok?"Reviewed note copied.":"Copy failed. Select the reviewed note and copy it manually.";
+  $("copy").textContent=ok?"Copied!":"Copy failed";setTimeout(()=>$("copy").textContent="Copy reviewed note",1800);};
+$("note").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();check();}});
+
+function reviewedHtml(){let o="",pos=0;for(const it of items){if(it.status==="accepted"){o+=esc(original.slice(pos,it.start))+'<span class="chgd">'+esc(it.rep)+'</span>';pos=it.end;}}return o+esc(original.slice(pos));}
+$("struct").onclick=()=>{const t=$("note"),tpl="When and where: \nWhat happened: \nWhat I did: \nWhat happens next: ";
+  t.value=t.value.trim()?t.value.replace(/\s+$/,"")+"\n\n"+tpl:tpl;t.focus();
+  if(t.value===tpl)t.setSelectionRange(16,16);$("live").textContent="Note structure added.";};
+$("dl").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([$("rev").textContent],{type:"text/plain"}));a.download="reviewed-note.txt";document.body.appendChild(a);a.click();a.remove();$("live").textContent="Reviewed note downloaded.";};
+$("clear").addEventListener("click",()=>document.querySelectorAll("details.tips input").forEach(c=>c.checked=false));
+
+</script>
+<script>
+/* ---------- Accessibility settings ---------- */
+(function(){
+  const KEYS=["theme","font","size","space","motion"];
+  const DEF={theme:"default",font:"default",size:"0",space:"0",motion:"0"};
+  const SIZE_NAMES=["Normal","Large","Larger","Largest"];
+  const panel=document.getElementById("a11y-panel"),toggle=document.getElementById("a11y-toggle");
+  const up=document.getElementById("size-up"),down=document.getElementById("size-down"),now=document.getElementById("size-now");
+  const live=document.getElementById("live");
+  const root=document.documentElement;
+  const prefs={};
+  KEYS.forEach(k=>{
+    const v=root.getAttribute("data-"+k);
+    const ok=k==="motion"?(v==="0"||v==="1"):!!panel.querySelector('input[name="'+k+'"][value="'+v+'"]');
+    prefs[k]=ok?v:DEF[k];
+  });
+  function apply(){
+    KEYS.forEach(k=>root.setAttribute("data-"+k,prefs[k]));
+    panel.querySelectorAll("input").forEach(i=>{i.checked=i.name==="motion"?prefs.motion==="1":prefs[i.name]===i.value;});
+    const si=+prefs.size;
+    now.textContent="Text size: "+SIZE_NAMES[si];
+    down.setAttribute("aria-disabled",si<=0?"true":"false");
+    up.setAttribute("aria-disabled",si>=3?"true":"false");
+    try{localStorage.setItem("cla-a11y",JSON.stringify(prefs));}catch(e){}
+  }
+  function say(t){live.textContent="";setTimeout(()=>{live.textContent=t;},30);}
+  panel.addEventListener("change",e=>{
+    const t=e.target;if(!(t.name in prefs))return;
+    prefs[t.name]=t.name==="motion"?(t.checked?"1":"0"):t.value;
+    apply();
+    const lab=t.closest("label").textContent.trim();
+    const group=t.closest("fieldset").querySelector("legend").textContent;
+    say(t.name==="motion"?"Reduce motion "+(t.checked?"on":"off")+".":group+": "+lab+".");
+  });
+  function step(d){
+    const n=Math.min(3,Math.max(0,+prefs.size+d));
+    if(n===+prefs.size){say(d>0?"Already at the largest text size.":"Already at the smallest text size.");return;}
+    prefs.size=String(n);apply();say("Text size: "+SIZE_NAMES[n]+".");
+  }
+  up.addEventListener("click",()=>step(1));
+  down.addEventListener("click",()=>step(-1));
+  function setOpen(o){panel.hidden=!o;toggle.setAttribute("aria-expanded",String(o));}
+  toggle.addEventListener("click",()=>setOpen(panel.hidden));
+  document.getElementById("a11y-done").addEventListener("click",()=>{setOpen(false);toggle.focus();});
+  document.getElementById("a11y-reset").addEventListener("click",()=>{Object.assign(prefs,DEF);apply();say("Accessibility settings reset to defaults.");});
+  panel.addEventListener("keydown",e=>{if(e.key==="Escape"){setOpen(false);toggle.focus();}});
+  apply();
+})();
+</script>
+</body>
+</html>
